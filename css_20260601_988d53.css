@@ -1,0 +1,12 @@
+.demo-badge {
+    background: #e9ecef;
+    border-radius: 40px;
+    padding: 6px 14px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.api-control {
+    display: none; /* скрываем старый блок, если он остался в HTML */
+}
