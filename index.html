@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Умный дашборд городского хозяйства Москвы</title>
+    <!-- Chart.js для графиков -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Основные стили -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Шапка -->
+        <header class="dashboard-header">
+            <div class="logo-area">
+                <i class="fas fa-city"></i>
+                <h1>Москва: Городское хозяйство</h1>
+            </div>
+            <div class="ai-status">
+                <i class="fas fa-robot"></i>
+                <span>Аналитический помощник (демо-режим)</span>
+            </div>
+        </header>
+
+        <!-- Панель ключевых показателей (KPI) -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-icon"><i class="fas fa-tasks"></i></div>
+                <div class="kpi-info">
+                    <h3>Открытые заявки</h3>
+                    <p class="kpi-value" id="openRequests">345</p>
+                    <span class="trend positive"><i class="fas fa-arrow-down"></i> -8%</span>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon"><i class="fas fa-clock"></i></div>
+                <div class="kpi-info">
+                    <h3>Среднее время ответа</h3>
+                    <p class="kpi-value" id="avgResponseTime">2.4</p>
+                    <span>дня</span>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon"><i class="fas fa-smile"></i></div>
+                <div class="kpi-info">
+                    <h3>Удовлетворённость</h3>
+                    <p class="kpi-value" id="satisfaction">86<span>%</span></p>
+                    <span class="trend positive"><i class="fas fa-arrow-up"></i> +3%</span>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon"><i class="fas fa-broom"></i></div>
+                <div class="kpi-info">
+                    <h3>Дворники на линиях</h3>
+                    <p class="kpi-value" id="streetWorkers">1250</p>
+                    <span>человек</span>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon"><i class="fas fa-hand-holding-usd"></i></div>
+                <div class="kpi-info">
+                    <h3>Бюджет ЖКХ (мес.)</h3>
+                    <p class="kpi-value" id="monthlyBudget">1 550<span> млн ₽</span></p>
+                    <span class="trend positive"><i class="fas fa-arrow-up"></i> +2.1%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Графики -->
+        <div class="charts-row">
+            <div class="chart-card">
+                <h3><i class="fas fa-chart-line"></i> Динамика заявок в Жилищник</h3>
+                <canvas id="requestsChart" width="400" height="250"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3><i class="fas fa-chart-line"></i> Удовлетворённость услугами ЖКХ (%)</h3>
+                <canvas id="satisfactionChart" width="400" height="250"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3><i class="fas fa-chart-line"></i> Расходы на ЖКХ (млн ₽)</h3>
+                <canvas id="budgetChart" width="400" height="250"></canvas>
+            </div>
+        </div>
+
+        <!-- Блок AI-советника (без внешних API) -->
+        <div class="ai-assistant-section">
+            <div class="assistant-header">
+                <i class="fas fa-brain"></i>
+                <h2>AI Советник по городскому хозяйству</h2>
+                <div class="demo-badge">🔍 Демо-режим (на основе данных дашборда)</div>
+            </div>
+            <div class="assistant-grid">
+                <!-- Чат-интерфейс -->
+                <div class="chat-panel">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message assistant">
+                            <i class="fas fa-robot"></i>
+                            <div class="message-text">Здравствуйте! Я советник по городскому хозяйству Москвы. Анализирую текущие показатели дашборда. Задайте любой вопрос (о заявках, бюджете, уборке, благоустройстве) или нажмите «Сгенерировать отчёт».</div>
+                        </div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" id="userQuestion" placeholder="Напишите вопрос, например: Как снизить количество заявок в Тверском районе?" autocomplete="off">
+                        <button id="sendQuestionBtn"><i class="fas fa-paper-plane"></i> Отправить</button>
+                        <button id="generateReportBtn" class="secondary"><i class="fas fa-chart-simple"></i> Сгенерировать отчёт</button>
+                    </div>
+                    <div class="loading-indicator" id="loadingIndicator" style="display: none;">
+                        <i class="fas fa-spinner fa-pulse"></i> Анализируем данные...
+                    </div>
+                </div>
+                <!-- Быстрая статистика контекста -->
+                <div class="context-stats">
+                    <h4><i class="fas fa-database"></i> Текущий контекст дашборда</h4>
+                    <ul>
+                        <li><strong>Открытых заявок:</strong> <span id="contextOpenRequests">345</span></li>
+                        <li><strong>Ср. время ответа:</strong> <span id="contextAvgTime">2.4</span> дня</li>
+                        <li><strong>Удовлетворённость:</strong> <span id="contextSat">86</span>%</li>
+                        <li><strong>Расходы (мес.):</strong> <span id="contextBudget">1 550</span> млн ₽</li>
+                        <li><strong>Дворников:</strong> <span id="contextWorkers">1 250</span></li>
+                    </ul>
+                    <p class="note">Аналитика работает полностью на основе демонстрационных данных. Без внешних ключей.</p>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Интерактивный дашборд с имитацией AI-советника | Данные — демонстрационные, обновляются в реальном времени</p>
+        </footer>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
